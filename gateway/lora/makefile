@@ -1,48 +1,48 @@
-include radio.makefile
+#include radio.makefile
 
 lora_gateway: lora_gateway.o arduPi.o SX1272.o
-	g++ -lrt -lpthread lora_gateway.o arduPi.o SX1272.o -o lora_gateway	
+	g++ -lrt -lpthread lora_gateway.o arduPi.o SX1272.o -o lora_gateway `mysql_config --cflags --libs`
 
 lora_gateway_pi2: lora_gateway_pi2.o arduPi_pi2.o SX1272_pi2.o
-	g++ -lrt -lpthread lora_gateway_pi2.o arduPi_pi2.o SX1272_pi2.o -o lora_gateway_pi2
+	g++ -lrt -lpthread lora_gateway_pi2.o arduPi_pi2.o SX1272_pi2.o -o lora_gateway_pi2 `mysql_config --cflags --libs`
 	rm -f lora_gateway
 	ln -s lora_gateway_pi2 ./lora_gateway
 	
 lora_gateway_wnetkey: lora_gateway.o arduPi.o SX1272_wnetkey.o
-	g++ -lrt -lpthread lora_gateway.o arduPi.o SX1272_wnetkey.o -o lora_gateway_wnetkey	
+	g++ -lrt -lpthread lora_gateway.o arduPi.o SX1272_wnetkey.o -o lora_gateway_wnetkey `mysql_config --cflags --libs`	
 
 lora_gateway_pi2_wnetkey: lora_gateway_pi2.o arduPi_pi2.o SX1272_pi2_wnetkey.o
-	g++ -lrt -lpthread lora_gateway_pi2.o arduPi_pi2.o SX1272_pi2_wnetkey.o -o lora_gateway_pi2_wnetkey
+	g++ -lrt -lpthread lora_gateway_pi2.o arduPi_pi2.o SX1272_pi2_wnetkey.o -o lora_gateway_pi2_wnetkey `mysql_config --cflags --libs`
 
 lora_gateway_winput: lora_gateway_winput.o arduPi.o SX1272.o
-	g++ -lrt -lpthread lora_gateway_winput.o arduPi.o SX1272.o -o lora_gateway_winput
+	g++ -lrt -lpthread lora_gateway_winput.o arduPi.o SX1272.o -o lora_gateway_winput `mysql_config --cflags --libs`
 
 lora_gateway_pi2_winput: lora_gateway_pi2_winput.o arduPi_pi2.o SX1272_pi2.o
-	g++ -lrt -lpthread lora_gateway_pi2_winput.o arduPi_pi2.o SX1272_pi2.o -o lora_gateway_pi2_winput
+	g++ -lrt -lpthread lora_gateway_pi2_winput.o arduPi_pi2.o SX1272_pi2.o -o lora_gateway_pi2_winput `mysql_config --cflags --libs`
 
 lora_gateway_downlink: lora_gateway_downlink.o arduPi.o SX1272.o
-	g++ -lrt -lpthread lora_gateway_downlink.o arduPi.o SX1272.o -o lora_gateway_downlink
+	g++ -lrt -lpthread lora_gateway_downlink.o arduPi.o SX1272.o -o lora_gateway_downlink `mysql_config --cflags --libs`
 
 lora_gateway_pi2_downlink: lora_gateway_pi2_downlink.o arduPi_pi2.o SX1272_pi2.o
-	g++ -lrt -lpthread lora_gateway_pi2_downlink.o arduPi_pi2.o SX1272_pi2.o -o lora_gateway_pi2_downlink
+	g++ -lrt -lpthread lora_gateway_pi2_downlink.o arduPi_pi2.o SX1272_pi2.o -o lora_gateway_pi2_downlink `mysql_config --cflags --libs`
 
 lora_gateway.o: lora_gateway.cpp
-	g++ $(CFLAGS) -DRASPBERRY -DIS_RCV_GATEWAY -c lora_gateway.cpp -o lora_gateway.o
+	g++ $(CFLAGS) -DRASPBERRY -DIS_RCV_GATEWAY -c lora_gateway.cpp -o lora_gateway.o `mysql_config --cflags --libs`
 
 lora_gateway_pi2.o: lora_gateway.cpp
-	g++ $(CFLAGS) -DRASPBERRY -DRASPBERRY2 -DIS_RCV_GATEWAY -c lora_gateway.cpp -o lora_gateway_pi2.o
+	g++ $(CFLAGS) -DRASPBERRY -DRASPBERRY2 -DIS_RCV_GATEWAY -c lora_gateway.cpp -o lora_gateway_pi2.o `mysql_config --cflags --libs`
 
 lora_gateway_winput.o: lora_gateway.cpp
 	g++ $(CFLAGS) -DRASPBERRY -DIS_RCV_GATEWAY -DWINPUT -c lora_gateway.cpp -o lora_gateway_winput.o
 
 lora_gateway_pi2_winput.o: lora_gateway.cpp
-	g++ $(CFLAGS) -DRASPBERRY -DRASPBERRY2 -DIS_RCV_GATEWAY -DWINPUT -c lora_gateway.cpp -o lora_gateway_pi2_winput.o
+	g++ $(CFLAGS) -DRASPBERRY -DRASPBERRY2 -DIS_RCV_GATEWAY -DWINPUT -c lora_gateway.cpp -o lora_gateway_pi2_winput.o `mysql_config --cflags --libs`
 
 lora_gateway_downlink.o: lora_gateway.cpp
 	g++ $(CFLAGS) -DRASPBERRY -DIS_RCV_GATEWAY -DDOWNLINK -c lora_gateway.cpp -o lora_gateway_downlink.o
 
 lora_gateway_pi2_downlink.o: lora_gateway.cpp
-	g++ $(CFLAGS) -DRASPBERRY -DRASPBERRY2 -DIS_RCV_GATEWAY -DDOWNLINK -c lora_gateway.cpp -o lora_gateway_pi2_downlink.o
+	g++ $(CFLAGS) -DRASPBERRY -DRASPBERRY2 -DIS_RCV_GATEWAY -DDOWNLINK -c lora_gateway.cpp -o lora_gateway_pi2_downlink.o `mysql_config --cflags --libs`
 
 arduPi.o: arduPi.cpp arduPi.h
 	g++ -c arduPi.cpp -o arduPi.o	
@@ -88,7 +88,7 @@ lora_device: lora_gateway_dev.o arduPi.o SX1272.o
 	g++ -lrt -lpthread lora_gateway_dev.o arduPi.o SX1272.o -o lora_device	
 
 lora_device_pi2: lora_gateway_dev_pi2.o arduPi_pi2.o SX1272_pi2.o
-	g++ -lrt -lpthread lora_gateway_dev.o arduPi_pi2.o SX1272_pi2.o -o lora_device_pi2
+	g++ -lrt -lpthread mysql_config --cflags --libs lora_gateway_dev.o arduPi_pi2.o SX1272_pi2.o -o lora_device_pi2
 
 lora_gateway_dev.o: lora_gateway.cpp
 	g++ $(CFLAGS) -DRASPBERRY -DIS_SEND_GATEWAY -DWINPUT -c lora_gateway.cpp -o lora_gateway_dev.o
