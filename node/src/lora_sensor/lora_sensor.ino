@@ -219,7 +219,9 @@ void loop(void){
     PRINT_CSTSTR("%s","Temperature: ");
     PRINT_VALUE("%f", temperature); PRINTLN;
 
-    r_size = sprintf((char*)message, "%d, %d, %d, %d, %d", packet_num, NODE_ADDR, moisture, temperature, humidity);
+//    r_size = sprintf((char*)message, "%d, %d, %d, %d, %d", packet_num, NODE_ADDR, moisture, temperature, humidity);
+    r_size = sprintf((char*)message, "%d %d %d %d %d", packet_num, NODE_ADDR, moisture, temperature, humidity);
+
     PRINT_CSTSTR("%s","Sending Sensor Data, Packet Num "); PRINTLN;
   
     /*
