@@ -94,6 +94,8 @@ char const *str_cmd = "INSERT INTO dataset (Temp, Humidity, Moisture) VALUES (";
 char const *str_val = "";
 char str_main[100];
 
+extern char t[4], h[4], m[4];
+
 extern void insertValues(int t, int h, int m) {
 //void insertValues() {
       //char t[4], h[4], m[4];
@@ -105,14 +107,7 @@ extern void insertValues(int t, int h, int m) {
       //strcat(str_main, (char*)&m);
       //strcat(str_main, "5");
       strcat(str_main, ");");
-/*
-      strcat(str_main, (char *)&temp);
-      strcat(str_main, ",");
-      strcat(str_main, (char *)&humidity);
-      strcat(str_main, ",");
-      strcat(str_main, (char *)&moisture);
-      strcat(str_main, ");");
-*/
+
       conn = mysql_init(NULL);
       if (!mysql_real_connect(conn, server,
             user, password, database, 0, NULL, 0)) {
@@ -961,7 +956,7 @@ void loop(void)
 
       if (!e) {
         
-         int a=0, b=0;
+         int a=0, b=0, c=0;
          uint8_t tmp_length;
 
          receivedFromLoRa=true;
@@ -1010,7 +1005,7 @@ void loop(void)
          sx1272.getRSSIpacket();
          
          // we split in 2 parts to use a smaller buffer size
-         sprintf(cmd, "--- rxlora. dst=%d type=0x%.2X src=%d seq=%d", 
+/* 111         sprintf(cmd, "--- rxlora. dst=%d type=0x%.2X src=%d seq=%d", 
                    sx1272.packet_received.dst,
                    sx1272.packet_received.type, 
                    sx1272.packet_received.src,
@@ -1027,12 +1022,12 @@ void loop(void)
                    sx1272._spreadingFactor);
                    
          PRINT_STR("%s", cmd);         
-
-
+*/
+	// PRINT_STR("%s", "Testing string!\n");
 
          // provide a short output for external program to have information about the received packet
          // ^psrc_id,seq,len,SNR,RSSI
-         sprintf(cmd, "^p%d,%d,%d,%d,%d,%d,%d\n",
+/*         sprintf(cmd, "^p%d,%d,%d,%d,%d,%d,%d\n",
                    sx1272.packet_received.dst,
                    sx1272.packet_received.type,                   
                    sx1272.packet_received.src,
@@ -1042,21 +1037,21 @@ void loop(void)
                    sx1272._RSSIpacket);
                    
          PRINT_STR("%s", cmd);          
-
+*/
          // ^rbw,cr,sf
-         sprintf(cmd, "^r%d,%d,%d\n", 
+/*         sprintf(cmd, "^r%d,%d,%d\n", 
                    (sx1272._bandwidth==BW_125)?125:((sx1272._bandwidth==BW_250)?250:500),
                    sx1272._codingRate+4,
                    sx1272._spreadingFactor);
-                   
-         PRINT_STR("%s", cmd);  
+*/                   
+         //PRINT_STR("%s", cmd);  
 #endif         
 ///////////////////////////////////////////////////////////////////
 
 #if not defined ARDUINO && not defined GW_RELAY        
          strftime(time_buffer, 30, "%Y-%m-%dT%H:%M:%S", tm_info);
-         sprintf(cmd, "^t%s.%03d\n", time_buffer, millisec);
-         PRINT_STR("%s", cmd);
+         //sprintf(cmd, "^t%s.%03d\n", time_buffer, millisec);
+         // PRINT_STR("%s", cmd);
 #endif
             
 #ifdef LORA_LAS        
@@ -1071,9 +1066,10 @@ void loop(void)
            
            if (v==DSP_DATA) {
              a=LAS_DSP+DATA_HEADER_LEN+1;
+	     c=a; 
 #ifdef WITH_DATA_PREFIX
-             PRINT_STR("%c",(char)DATA_PREFIX_0);      
-             PRINT_STR("%c",(char)DATA_PREFIX_1);
+             //PRINT_STR("%c",(char)DATA_PREFIX_0);      
+             //PRINT_STR("%c",(char)DATA_PREFIX_1);
 #endif             
            }
            else
@@ -1081,11 +1077,13 @@ void loop(void)
              a=tmp_length; 
          }
          else
-           PRINT_CSTSTR("%s","No LAS header. Write raw data\n");
+           //PRINT_CSTSTR("%s","No LAS header. Write raw data\n");
 #else
 #if defined WITH_DATA_PREFIX && not defined GW_RELAY
-         PRINT_STR("%c",(char)DATA_PREFIX_0);        
-         PRINT_STR("%c",(char)DATA_PREFIX_1);
+         //PRINT_STR("%c",(char)DATA_PREFIX_0);        
+         //PRINT_STR("%c",(char)DATA_PREFIX_1);
+         //PRINT_STR("%s", "This is the data received abovee\n");
+
 #endif
 #endif
 
@@ -1117,7 +1115,13 @@ void loop(void)
 
            if (b<MAX_CMD_LENGTH)
               cmd[b]=(char)sx1272.packet_received.data[a];
-         }
+         
+	}
+	
+	 PRINT_CSTSTR("%s", (char *)&sx1272.packet_received.data[c]);
+
+//         sprintf(h, (char *)&sx1272.packet_received.data[c]);
+//89 
          
          // strlen(cmd) will be correct as only the payload is copied
          cmd[b]='\0';    
