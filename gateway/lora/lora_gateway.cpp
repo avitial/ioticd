@@ -77,9 +77,22 @@
 #include "SX1272.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <string>
 #include <mysql/mysql.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+using namespace std;
+extern string packetdata; 
+
+typedef struct {
+	int packetno,
+	    node,
+	    temperature,
+	    humidity,
+	    moisture;
+} lorapacket_t;
 
 // mysql database variables
 MYSQL *conn;
@@ -93,20 +106,22 @@ char const *table = "dataset";
 char const *str_cmd = "INSERT INTO dataset (Temp, Humidity, Moisture) VALUES (";
 char const *str_val = "";
 char str_main[100];
+lorapacket_t lorapacket;
 
 extern char t[4], h[4], m[4];
 
-extern void insertValues(int t, int h, int m) {
-//void insertValues() {
-      //char t[4], h[4], m[4];
-      //int temp=75, humidity = 50, moisture = 25; 
-      //str_val = "%d" + temp + ", %d" + humidity + ", %d" + moisture + ");";  
-      str_val = "50, 10, 5"; 
+extern void insertValues() {
+      cout<< lorapacket.node << lorapacket.temperature << lorapacket.humidity<< lorapacket.moisture << endl;
       strcpy(str_main,str_cmd);
-      strcat(str_main,str_val);
-      //strcat(str_main, (char*)&m);
-      //strcat(str_main, "5");
+      //strcat(str_main,str_val);
+      //strcat(str_main, ");");
+      strcat(str_main, (char *)&lorapacket.temperature);
+      strcat(str_main, ",");
+      strcat(str_main, (char *)&lorapacket.humidity);
+      strcat(str_main, ",");
+      strcat(str_main, (char *)&lorapacket.moisture);
       strcat(str_main, ");");
+      //strcat(str_cmd, (char *)&str_main);
 
       conn = mysql_init(NULL);
       if (!mysql_real_connect(conn, server,
@@ -996,10 +1011,7 @@ void loop(void)
          
 #if not defined GW_RELAY
 // here is where the lora packet is received (displayed on screen)	 
-	int temperature = 1;
-	int humidity = 5; 
-	int moisture = 10;
-	insertValues(temperature , humidity, moisture);
+	//insertValues();
 	 
 	 sx1272.getSNR();
          sx1272.getRSSIpacket();
@@ -1111,14 +1123,16 @@ void loop(void)
          // print to stdout the content of the packet
          //
          for ( ; a<tmp_length; a++,b++) {
-           PRINT_STR("%c",(char)sx1272.packet_received.data[a]);
+           //PRINT_STR("%c",(char)sx1272.packet_received.data[a]);
 
            if (b<MAX_CMD_LENGTH)
               cmd[b]=(char)sx1272.packet_received.data[a];
          
 	}
-	
 	 PRINT_CSTSTR("%s", (char *)&sx1272.packet_received.data[c]);
+	 std::stringstream ss((char *)&sx1272.packet_received.data[c]);
+	 ss >> lorapacket.packetno >> lorapacket.node >> lorapacket.temperature >> lorapacket.humidity >> lorapacket.moisture; 
+	 insertValues();
 
 //         sprintf(h, (char *)&sx1272.packet_received.data[c]);
 //89 
