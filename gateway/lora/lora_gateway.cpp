@@ -103,25 +103,32 @@ char const *user = "root";
 char const *password = "root";
 char const *database = "irrigation";
 char const *table = "dataset";
+char const *str_base = "INSERT INTO dataset (Temp, Humidity, Moisture) VALUES (";
 char const *str_cmd = "INSERT INTO dataset (Temp, Humidity, Moisture) VALUES (";
 char const *str_val = "";
-char str_main[100];
+char str_main[120];
 lorapacket_t lorapacket;
 
-extern char t[4], h[4], m[4];
+extern void MyBzero(char *p, int size) {
+   while(size--) *p++ = 0; // one statement as per Chang's feedback
+}
 
 extern void insertValues() {
-      cout<< lorapacket.node << lorapacket.temperature << lorapacket.humidity<< lorapacket.moisture << endl;
-      strcpy(str_main,str_cmd);
-      //strcat(str_main,str_val);
-      //strcat(str_main, ");");
-      strcat(str_main, (char *)&lorapacket.temperature);
+      char pno[10], n[4], tem[4], hum[4], moi[4];
+
+      snprintf(tem, sizeof(tem), "%d", lorapacket.temperature);
+      snprintf(hum, sizeof(hum), "%d", lorapacket.humidity);
+      snprintf(moi, sizeof(moi), "%d", lorapacket.moisture);
+	
+      strcpy((char *)&str_cmd, (char const *)&str_base);
+      strcpy(str_main, str_cmd);
+      strcat(str_main, tem);
       strcat(str_main, ",");
-      strcat(str_main, (char *)&lorapacket.humidity);
+      strcat(str_main, (char const *)&hum);
       strcat(str_main, ",");
-      strcat(str_main, (char *)&lorapacket.moisture);
+      strcat(str_main, (char const *)&moi);
       strcat(str_main, ");");
-      //strcat(str_cmd, (char *)&str_main);
+      strcat((char *)&str_cmd, (char const *)&str_main);
 
       conn = mysql_init(NULL);
       if (!mysql_real_connect(conn, server,
@@ -1129,10 +1136,11 @@ void loop(void)
               cmd[b]=(char)sx1272.packet_received.data[a];
          
 	}
-	 PRINT_CSTSTR("%s", (char *)&sx1272.packet_received.data[c]);
+	// PRINT_CSTSTR("%s", (char *)&sx1272.packet_received.data[c]);
 	 std::stringstream ss((char *)&sx1272.packet_received.data[c]);
 	 ss >> lorapacket.packetno >> lorapacket.node >> lorapacket.temperature >> lorapacket.humidity >> lorapacket.moisture; 
-	 insertValues();
+	         cout << "packetno. " << lorapacket.packetno << " node " << lorapacket.node << " temperature " << lorapacket.temperature << " humidity " <<lorapacket.humidity << " moisture " << lorapacket.moisture << endl; 
+	insertValues();
 
 //         sprintf(h, (char *)&sx1272.packet_received.data[c]);
 //89 
