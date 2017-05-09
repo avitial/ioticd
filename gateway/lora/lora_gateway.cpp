@@ -103,10 +103,10 @@ char const *user = "root";
 char const *password = "root";
 char const *database = "irrigation";
 char const *table = "dataset";
-char const *str_base = "INSERT INTO dataset (Temp, Humidity, Moisture) VALUES (";
-char const *str_cmd = "INSERT INTO dataset (Temp, Humidity, Moisture) VALUES (";
+char const *str_base = "INSERT INTO dataset (Temp, Humidity, Moisture, node, packetno) VALUES (";
+char const *str_cmd = "INSERT INTO dataset (Temp, Humidity, Moisture, node, packetno) VALUES (";
 char const *str_val = "";
-char str_main[120];
+char str_main[200];
 lorapacket_t lorapacket;
 
 extern void MyBzero(char *p, int size) {
@@ -114,19 +114,26 @@ extern void MyBzero(char *p, int size) {
 }
 
 extern void insertValues() {
-      char pno[10], n[4], tem[4], hum[4], moi[4];
+      char pckno[10], nod[4], tem[4], hum[4], moi[4];
 
       snprintf(tem, sizeof(tem), "%d", lorapacket.temperature);
       snprintf(hum, sizeof(hum), "%d", lorapacket.humidity);
       snprintf(moi, sizeof(moi), "%d", lorapacket.moisture);
+      snprintf(nod, sizeof(nod), "%d", lorapacket.node);
+      snprintf(pckno, sizeof(pckno), "%d", lorapacket.packetno);
+
 	
       strcpy((char *)&str_cmd, (char const *)&str_base);
       strcpy(str_main, str_cmd);
-      strcat(str_main, tem);
+      strcat(str_main, (char const *)&tem);
       strcat(str_main, ",");
       strcat(str_main, (char const *)&hum);
       strcat(str_main, ",");
       strcat(str_main, (char const *)&moi);
+      strcat(str_main, ",");
+      strcat(str_main, (char const *)&nod);
+      strcat(str_main, ",");
+      strcat(str_main, (char const *)&pckno);
       strcat(str_main, ");");
       strcat((char *)&str_cmd, (char const *)&str_main);
 
@@ -136,7 +143,7 @@ extern void insertValues() {
           fprintf(stderr, "%s\n", mysql_error(conn));
           exit(1);
       }
-        // if (mysql_query(conn, "INSERT INTO dataset (Temp, Humidity, Moisture) VALUES (temp, humidity, moisture);")) {
+        // if (mysql_query(conn, "INSERT INTO dataset (Temp, Humidity, Moisture, node, packetno) VALUES (temp, humidity, moisture, node, packetno);")) {
 	if (mysql_query(conn, (char *)&str_main)) {
 	  printf("Error while inserting values\n");
 	  exit(1);
@@ -299,7 +306,7 @@ uint32_t loraChannelArray[MAX_NB_CHANNEL]={CH_00_433,CH_01_433,CH_02_433,CH_03_4
 
 ///////////////////////////////////////////////////////////////////
 // DEFAULT LORA MODE
-#define LORAMODE 1
+#define LORAMODE 6 
 // the special mode to test BW=125MHz, CR=4/5, SF=12
 // on the 868.1MHz channel
 //#define LORAMODE 11
@@ -1130,7 +1137,7 @@ void loop(void)
          // print to stdout the content of the packet
          //
          for ( ; a<tmp_length; a++,b++) {
-           //PRINT_STR("%c",(char)sx1272.packet_received.data[a]);
+         //    PRINT_STR("%c",(char)sx1272.packet_received.data[a]);
 
            if (b<MAX_CMD_LENGTH)
               cmd[b]=(char)sx1272.packet_received.data[a];
@@ -1138,8 +1145,8 @@ void loop(void)
 	}
 	// PRINT_CSTSTR("%s", (char *)&sx1272.packet_received.data[c]);
 	 std::stringstream ss((char *)&sx1272.packet_received.data[c]);
-	 ss >> lorapacket.packetno >> lorapacket.node >> lorapacket.temperature >> lorapacket.humidity >> lorapacket.moisture; 
-	         cout << "packetno. " << lorapacket.packetno << " node " << lorapacket.node << " temperature " << lorapacket.temperature << " humidity " <<lorapacket.humidity << " moisture " << lorapacket.moisture << endl; 
+	 ss >> lorapacket.packetno >> lorapacket.node >> lorapacket.moisture >> lorapacket.temperature >> lorapacket.humidity; 
+	         cout << "packetno: " << lorapacket.packetno << ". node: " << lorapacket.node << ". moisture: " << lorapacket.moisture << ". temperature: " <<lorapacket.temperature << ". humidity: " << lorapacket.humidity << endl; 
 	insertValues();
 
 //         sprintf(h, (char *)&sx1272.packet_received.data[c]);
