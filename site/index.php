@@ -3,7 +3,7 @@ ____________________________________________________Notes_______________________
 -Add a dropdown on loginS. Add a GET request for every dropdown value that will show the desired table. 
 -Connect to database button to be moved to loginS.html.php. These values should run before anything else, to setablish a
   connection. 
-
+- Need to add success alert when new data is added. User will be kept on same loginS page. (new data fields will be emptied)
 
 
 
@@ -30,22 +30,22 @@ if(isset($_POST['Submit'])){
   $user = $_REQUEST['User'];
   $pwd = $_REQUEST['Password'];
 
-  if ( ($user != 'David' & $pwd == 'pwd') ) {
+  if ( ($user != 'User' & $pwd == 'pwd') ) {
     $output = 'Invalid User';
     include 'output.html.php';
     exit();
   }
-  elseif ( ($user == 'David' & $pwd != 'pwd') ) {
+  elseif ( ($user == 'User' & $pwd != 'pwd') ) {
     $output = 'Invalid Password';
     include 'output.html.php';
     exit();
   }
-  elseif( ($user != 'David' & $pwd != 'pwd') ){
+  elseif( ($user != 'User' & $pwd != 'pwd') ){
     $output = 'Incorrect user information. Please check user and password.';
     include 'output.html.php';
     exit();
   }
-  elseif(($user == 'David')&($pwd == 'pwd')){
+  elseif(($user == 'User')&($pwd == 'pwd')){
     include 'loginS.html.php';
     header('Location: loginS.html.php');
     exit();
@@ -96,11 +96,13 @@ if(isset($_POST['datasetNrow'])){
     include 'error.html.php';   
     exit();   
   }
+  /*
   else{
     $output = 'NEW ROW SUCCESSFULY ADDED';
     include 'loginS.html.php';
     exit();
-  }   
+  } 
+  */  
 }
 //_________________________________________________Displaying Data in Table_____________________________________________
 
