@@ -1,0 +1,49 @@
+<html>
+<head>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['line']});
+      google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('number', 'Packet Number');
+      data.addColumn('number', 'Temp');
+      data.addColumn('number', 'Humidity');
+      data.addColumn('number', 'Moisture');
+
+      data.addRows([//test data set in the form: [Packet#, Temp, Humidity, Moisture]
+        [1, 80, 46, 12],
+        [2, 82, 40, 24],
+        [3, 94, 50, 20],
+        [4, 95, 56, 18],
+        [5, 90, 53, 15],
+        [6, 87, 60, 20],
+        [7, 85, 57, 17]
+      ]);
+
+      var options = {
+        chart: {
+          title: 'Box Office Earnings in First Two Weeks of Opening',
+          subtitle: 'in millions of dollars (USD)'
+        },
+        width: 900,
+        height: 500,
+        axes: {
+          x: {
+            0: {side: 'top'}
+          }
+        }
+      };
+
+      var chart = new google.charts.Line(document.getElementById('line_top_x'));
+
+      chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+  </script>
+</head>
+<body>
+  <div id="line_top_x"></div>
+</body>
+</html>
